@@ -1,12 +1,45 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from 'react';
+import RecipeGenerator from '@/components/RecipeGenerator';
+import heroImage from '@/assets/hero-cooking.jpg';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-subtle">
+      {/* Hero Section */}
+      <div className="relative">
+        <div 
+          className="h-64 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/60" />
+          <div className="relative h-full flex items-center justify-center">
+            <div className="text-center space-y-4 px-4">
+              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-hero bg-clip-text text-transparent">
+                AI Recipe Generator
+              </h1>
+              <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl">
+                Turn your ingredients into culinary masterpieces with AI-powered recipe suggestions
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <div className="relative -mt-16">
+        <RecipeGenerator />
+      </div>
+      
+      {/* Footer */}
+      <footer className="bg-card border-t border-border mt-16">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="text-center text-muted-foreground">
+            <p className="text-sm">
+              Powered by AI • Made with ❤️ for home cooks everywhere
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
