@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          allergies: string[] | null
+          avatar_url: string | null
+          created_at: string
+          dietary_preferences: string[] | null
+          display_name: string | null
+          id: string
+          skill_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          created_at?: string
+          dietary_preferences?: string[] | null
+          display_name?: string | null
+          id?: string
+          skill_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          created_at?: string
+          dietary_preferences?: string[] | null
+          display_name?: string | null
+          id?: string
+          skill_level?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          cook_time: number | null
+          created_at: string
+          cuisine_type: string | null
+          description: string | null
+          dietary_tags: string[] | null
+          difficulty: string | null
+          id: string
+          image_url: string | null
+          ingredients: Json
+          instructions: Json
+          is_favorite: boolean | null
+          prep_time: number | null
+          servings: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cook_time?: number | null
+          created_at?: string
+          cuisine_type?: string | null
+          description?: string | null
+          dietary_tags?: string[] | null
+          difficulty?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients: Json
+          instructions: Json
+          is_favorite?: boolean | null
+          prep_time?: number | null
+          servings?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cook_time?: number | null
+          created_at?: string
+          cuisine_type?: string | null
+          description?: string | null
+          dietary_tags?: string[] | null
+          difficulty?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: Json
+          instructions?: Json
+          is_favorite?: boolean | null
+          prep_time?: number | null
+          servings?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
