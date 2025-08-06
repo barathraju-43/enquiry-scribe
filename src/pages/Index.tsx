@@ -1,10 +1,37 @@
 import React from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import RecipeGenerator from '@/components/RecipeGenerator';
+import UserNav from '@/components/UserNav';
 import heroImage from '@/assets/hero-cooking.jpg';
+import { Navigate } from 'react-router-dom';
 
 const Index = () => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <h1 className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
+            SmartPantry AI
+          </h1>
+          <UserNav />
+        </div>
+      </header>
+
       {/* Hero Section */}
       <div className="relative">
         <div 

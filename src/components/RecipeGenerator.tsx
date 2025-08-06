@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
 import { ChefHat, Clock, Users, Plus, X, Sparkles } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const dietaryOptions = [
   'Vegetarian', 'Vegan', 'Gluten-Free', 'Keto', 'Paleo', 'Mediterranean', 
@@ -30,6 +33,8 @@ interface Recipe {
 }
 
 const RecipeGenerator = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [currentIngredient, setCurrentIngredient] = useState('');
   const [selectedDiets, setSelectedDiets] = useState<string[]>([]);
@@ -65,65 +70,54 @@ const RecipeGenerator = () => {
   };
 
   const generateRecipes = async () => {
+    if (!user) return;
+    
     setIsGenerating(true);
     
-    // Simulate API call with realistic delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock recipe generation based on ingredients
-    const mockRecipes: Recipe[] = [
-      {
-        id: '1',
-        title: 'Mediterranean Herb Pasta',
-        description: 'A fresh and flavorful pasta dish with aromatic herbs and seasonal vegetables.',
-        cookTime: '25 min',
-        servings: 4,
-        difficulty: 'Easy',
-        ingredients: ingredients.slice(0, 6),
-        instructions: [
-          'Boil pasta according to package directions',
-          'Sauté garlic and herbs in olive oil',
-          'Add vegetables and cook until tender',
-          'Toss with pasta and serve hot'
-        ],
-        image: 'pasta'
-      },
-      {
-        id: '2',
-        title: 'Garden Fresh Stir-Fry',
-        description: 'Quick and healthy stir-fry packed with fresh vegetables and bold flavors.',
-        cookTime: '15 min',
-        servings: 3,
-        difficulty: 'Easy',
-        ingredients: ingredients.slice(0, 5),
-        instructions: [
-          'Heat oil in a large pan or wok',
-          'Add harder vegetables first',
-          'Stir-fry until crisp-tender',
-          'Season and serve over rice'
-        ],
-        image: 'stirfry'
-      },
-      {
-        id: '3',
-        title: 'Rustic Herb Soup',
-        description: 'Warming soup with fresh herbs and seasonal ingredients.',
-        cookTime: '40 min',
-        servings: 6,
-        difficulty: 'Medium',
-        ingredients: ingredients.slice(0, 8),
-        instructions: [
-          'Sauté onions and garlic',
-          'Add vegetables and broth',
-          'Simmer until tender',
-          'Blend if desired and season to taste'
-        ],
-        image: 'soup'
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-recipe', {
+        body: {
+          ingredients,
+          dietaryPreferences: selectedDiets,
+          cuisineTypes: selectedCuisines,
+          userId: user.id,
+        },
+      });
+
+      if (error) {
+        throw error;
       }
-    ];
-    
-    setRecipes(mockRecipes);
-    setIsGenerating(false);
+
+      // Convert the response to match our Recipe interface
+      const newRecipe: Recipe = {
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        cookTime: `${data.cook_time} min`,
+        servings: data.servings,
+        difficulty: data.difficulty,
+        ingredients: data.ingredients,
+        instructions: data.instructions,
+        image: 'ai-recipe'
+      };
+
+      setRecipes([newRecipe]);
+      
+      toast({
+        title: "Recipe Generated!",
+        description: "Your AI-powered recipe has been created and saved.",
+      });
+      
+    } catch (error: any) {
+      console.error('Error generating recipe:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate recipe. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (

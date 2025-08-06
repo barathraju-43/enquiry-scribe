@@ -1,1 +1,20 @@
 project_id = "jrpsvqryfodfanztkwoh"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+port = 54324
+site_url = "http://127.0.0.1:5173"
+additional_redirect_urls = ["https://lovable.app"]
+jwt_expiry = 3600
+enable_signup = true
+enable_email_confirmations = false
+
+[functions.generate-recipe]
+verify_jwt = true
