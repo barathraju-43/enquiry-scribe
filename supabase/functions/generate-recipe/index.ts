@@ -88,10 +88,10 @@ serve(async (req) => {
       throw new Error('Invalid recipe format received from AI');
     }
 
-    // Save the recipe to Supabase
+    // Save the recipe to Supabase using service role key to bypass RLS
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data: savedRecipe, error: saveError } = await supabase
       .from('recipes')
