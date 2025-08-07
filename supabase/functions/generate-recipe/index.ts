@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const groqApiKey = Deno.env.get('GROQ_API_KEY');
 
 interface RecipeRequest {
   ingredients: string[];
@@ -24,13 +24,13 @@ serve(async (req) => {
   try {
     const { ingredients, dietaryPreferences, cuisineTypes, userId }: RecipeRequest = await req.json();
 
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+    if (!groqApiKey) {
+      throw new Error('Groq API key not configured');
     }
 
     console.log('Generating recipe for user:', userId);
 
-    // Create the prompt for OpenAI
+    // Create the prompt for Groq
     const prompt = `Create a detailed recipe using these ingredients: ${ingredients.join(', ')}.
     
     Dietary preferences: ${dietaryPreferences.join(', ') || 'None'}
@@ -50,14 +50,14 @@ serve(async (req) => {
     
     Make sure all ingredients from the input are used, and the recipe is realistic and delicious.`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${groqApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'llama-3.1-8b-instant',
         messages: [
           {
             role: 'system',
@@ -73,7 +73,7 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      throw new Error(`Groq API error: ${response.statusText}`);
     }
 
     const data = await response.json();
