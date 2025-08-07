@@ -79,10 +79,18 @@ serve(async (req) => {
     const data = await response.json();
     const recipeContent = data.choices[0].message.content;
 
-    // Parse the JSON response
+    // Parse the JSON response - extract JSON from markdown if needed
     let recipeData;
     try {
-      recipeData = JSON.parse(recipeContent);
+      let jsonContent = recipeContent;
+      
+      // Check if the response is wrapped in markdown code blocks
+      const jsonMatch = recipeContent.match(/```json\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        jsonContent = jsonMatch[1];
+      }
+      
+      recipeData = JSON.parse(jsonContent);
     } catch (error) {
       console.error('Failed to parse recipe JSON:', recipeContent);
       throw new Error('Invalid recipe format received from AI');
