@@ -5,7 +5,8 @@ import { Badge } from './ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
-import { ChefHat, Clock, Users, Plus, X, Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { ChefHat, Clock, Users, Plus, X, Sparkles, Eye } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,6 +42,7 @@ const RecipeGenerator = () => {
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   const addIngredient = () => {
     if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
@@ -101,7 +103,7 @@ const RecipeGenerator = () => {
         image: 'ai-recipe'
       };
 
-      setRecipes([newRecipe]);
+      setRecipes(prev => [...prev, newRecipe]);
       
       toast({
         title: "Recipe Generated!",
@@ -307,9 +309,60 @@ const RecipeGenerator = () => {
                     </div>
                   </div>
 
-                  <Button variant="elegant" className="w-full">
-                    View Full Recipe
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="elegant" className="w-full">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Full Recipe
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl">{recipe.title}</DialogTitle>
+                        <DialogDescription className="text-base">{recipe.description}</DialogDescription>
+                      </DialogHeader>
+                      
+                      <div className="space-y-6 mt-4">
+                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            {recipe.cookTime}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            {recipe.servings} servings
+                          </div>
+                          <Badge variant="outline">{recipe.difficulty}</Badge>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-semibold mb-3">Ingredients</h3>
+                          <ul className="space-y-2">
+                            {recipe.ingredients.map((ingredient, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <span className="text-primary">•</span>
+                                <span>{ingredient}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-semibold mb-3">Instructions</h3>
+                          <ol className="space-y-3">
+                            {recipe.instructions.map((instruction, index) => (
+                              <li key={index} className="flex gap-3">
+                                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm flex items-center justify-center font-medium">
+                                  {index + 1}
+                                </span>
+                                <span className="pt-0.5">{instruction}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
             ))}
