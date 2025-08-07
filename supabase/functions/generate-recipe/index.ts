@@ -106,7 +106,6 @@ serve(async (req) => {
         difficulty: recipeData.difficulty,
         cuisine_type: recipeData.cuisineType,
         dietary_tags: dietaryPreferences,
-        is_ai_generated: true,
       })
       .select()
       .single();
